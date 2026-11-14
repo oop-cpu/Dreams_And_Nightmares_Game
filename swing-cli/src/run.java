@@ -54,7 +54,7 @@ public class run{
         if (playerImage != null) {
             ImageIcon icon = new ImageIcon(new ImageIcon(playerImage).getImage().getScaledInstance(80, -1, Image.SCALE_SMOOTH));
             playerLabel = new JLabel(icon);
-            playerLabel.setBounds(10, 10, 2000, 2000);
+            playerLabel.setBounds(10, 10, 10, 10);
         } else {
             System.out.println("playerImage not found!");
             playerLabel = new JLabel("playerImage");
@@ -198,11 +198,11 @@ public class run{
                     user.setPosition(screen.width-1, user.getY());
                 }
             }
-            if(user.getY() > screen.height){
-                user.setPosition(user.getX(), user.getY()-1);
+            if(user.getY() < 0){
+                user.setPosition(user.getX(), 1);
             }
-            else if(user.getY() < 0){
-                user.setPosition(user.getX(), user.getY()+1);
+            else if(user.getY() > screen.height-10){
+                user.setPosition(user.getX(), screen.height-10);
             }
             playerLabel.setBounds(user.getX(), user.getY(), imgW, imgH);
         }).start();
