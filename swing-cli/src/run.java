@@ -21,7 +21,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+
 public class run{
+
+    // Temp Vars
+    public static int posX = 10;
+    public static int posY = 10;
+    public static int speed = 10;
 
     // Frames
     public static JFrame game = new JFrame();
@@ -32,17 +40,19 @@ public class run{
     // Images (example var 'image')
     public static URL playerImage = run.class.getResource("playerImage.png");
 
+    // Elements
+    public static JLabel playerLabel;
+
     // Colors
     public static Color backgroundColor = new Color(18, 18, 28);
 
     public static void main(String[] args){
 
         // Image Loading (example var 'image' and 'imageLabel')
-        JLabel playerLabel;
         if (playerImage != null) {
             ImageIcon icon = new ImageIcon(playerImage);
             playerLabel = new JLabel(icon);
-            playerLabel.setBounds(100, 100, 2000, 2000);
+            playerLabel.setBounds(10, 10, 2000, 2000);
         } else {
             System.out.println("playerImage not found!");
             playerLabel = new JLabel("playerImage");
@@ -58,6 +68,54 @@ public class run{
 
         //Frame init
         game.setVisible(true);
+
+        // Key Listener
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame();
+            JPanel panel = new JPanel();
+
+            // Bind keys to the panel even when child components have focus
+            InputMap inputMap = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+            ActionMap actionMap = panel.getActionMap();
+
+            // Register Spacebar
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "spaceAction");
+            actionMap.put("spaceAction", new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    posChange('r');
+                }
+            });
+
+            frame.add(panel);
+            frame.setSize(400, 200);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        });
+
+    }
+
+    public static void posChange(char dir){
+        switch(dir){
+            case 'l':
+                posX -= speed;
+                break;
+            case 'r':
+                posX += speed;
+                break;
+            case 'u':
+                posY -= speed;
+                break;
+            case 'd':
+                posY += speed;
+                break;
+            default:
+                System.out.println("dir error");
+                return;
+        }
+
+        playerLabel.setBounds(posX, posY, 2000, 2000);
 
     }
 
