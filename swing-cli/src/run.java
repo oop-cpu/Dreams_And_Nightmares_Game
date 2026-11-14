@@ -57,6 +57,13 @@ public class run{
             playerLabel = new JLabel("playerImage");
         }
 
+        
+        Rectangle screen = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        int imgW = playerLabel.getPreferredSize().width;
+        int imgH = playerLabel.getPreferredSize().height;
+        user.setPosition(screen.width / 2 - imgW / 2, screen.height / 2 - imgH / 2);
+        playerLabel.setBounds(user.getX(), user.getY(), imgW, imgH);
+
         // Frame Setup
         game.setExtendedState(JFrame.MAXIMIZED_BOTH);
         game.getContentPane().setBackground(backgroundColor);
@@ -159,7 +166,7 @@ public class run{
         // Game loop: about 60 times a second, move the player and the image
         new javax.swing.Timer(16, e -> {
             user.update();
-            playerLabel.setBounds(user.getX(), user.getY(), 2000, 2000);
+            playerLabel.setBounds(user.getX(), user.getY(), imgW, imgH);
         }).start();
 
         // REMOVED: posChange(char dir). Movement is handled by player.update() in the game loop
