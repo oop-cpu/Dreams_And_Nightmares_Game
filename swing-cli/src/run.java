@@ -87,8 +87,44 @@ public class run{
                 }
             });
 
+            // Register w
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0), "wAction");
+            actionMap.put("wAction", new AbstractAction(){
+                @Override
+                public void actionPerformed(ActionEvent e){
+                    posChange('u');
+                }
+            });
+
+            // Register a
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0), "aAction");
+            actionMap.put("aAction", new AbstractAction(){
+                @Override
+                public void actionPerformed(ActionEvent e){
+                    posChange('l');
+                }
+            });
+
+            // Register d
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0), "dAction");
+            actionMap.put("dAction", new AbstractAction(){
+                @Override
+                public void actionPerformed(ActionEvent e){
+                    posChange('r');
+                }
+            });
+
+            // Register s
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0), "sAction");
+            actionMap.put("sAction", new AbstractAction(){
+                @Override
+                public void actionPerformed(ActionEvent e){
+                    posChange('d');
+                }
+            });
+
             frame.add(panel);
-            frame.setSize(400, 200);
+            frame.setSize(0, 0);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
