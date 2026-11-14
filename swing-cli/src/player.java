@@ -68,11 +68,11 @@ public class player {
         int dx = 0, dy = 0;
 
          // If both opposite keys are held, the one pressed last wins
-        if (up && down)      dy = (lastV == 'u') ? -1 : 1;
+        if (up && down)      dy = 0;
         else if (up)         dy = -1;
         else if (down)       dy = 1;
 
-        if (left && right)   dx = (lastH == 'l') ? -1 : 1;
+        if (left && right)   dx = 0;
         else if (left)       dx = -1;
         else if (right)      dx = 1;
 
