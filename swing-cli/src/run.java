@@ -7,7 +7,6 @@ import javax.swing.text.DefaultCaret;
 import java.net.URL;
 
 import javax.sound.sampled.*;
-import javax.swing.*;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -38,6 +37,7 @@ public class run{
     // Starting vars
     // CHANGED: uncommented and gave a start position so the game uses player.java
     public static player user = new player(10, 10);
+    public static Rectangle screen;
 
     // Images (example var 'image')
     public static URL playerImage = run.class.getResource("playerImage.png");
@@ -61,7 +61,7 @@ public class run{
         }
 
         
-        Rectangle screen = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        screen = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
         int imgW = playerLabel.getPreferredSize().width;
         int imgH = playerLabel.getPreferredSize().height;
         user.setPosition(screen.width / 2 - imgW / 2, screen.height / 2 - imgH / 2);
@@ -75,30 +75,7 @@ public class run{
 
         game.add(playerLabel);
 
-        // Background floor from the Puny Dungeon tileset (added AFTER the player so it's drawn behind it)
-        try {
-            BufferedImage tiles = ImageIO.read(run.class.getResource("punyworld-dungeon-tileset.png"));
-            BufferedImage floorTile = tiles.getSubimage(64, 0, 64, 64);   // 4x4 block of floor tiles
-            int tileScale = Math.max(1, screen.width / 480); 
-            int t = 64 * tileScale;
-
-            BufferedImage floor = new BufferedImage(screen.width, screen.height, BufferedImage.TYPE_INT_RGB);
-            Graphics2D fg = floor.createGraphics();
-            for (int y = 0; y < screen.height; y += t) {
-                for (int x = 0; x < screen.width; x += t) {
-                    fg.drawImage(floorTile, x, y, t, t, null);
-                }
-            }
-            fg.setColor(new Color(10, 5, 30, 140));   // dark, dreamy tint over the floor
-            fg.fillRect(0, 0, screen.width, screen.height);
-            fg.dispose();
-
-            JLabel bgLabel = new JLabel(new ImageIcon(floor));
-            bgLabel.setBounds(0, 0, screen.width, screen.height);
-            game.add(bgLabel);
-        } catch (Exception ex) {
-            System.out.println("Could not load floor tileset: " + ex);
-        }
+        setTile(user.getNode());
 
         //Frame init
         game.setVisible(true);
@@ -196,12 +173,70 @@ public class run{
         // player.update() moves the player using the held keys, then the image follows
         // Uses javax.swing.Timer by full name because java.util.* also has a Timer class
         // Game loop: about 60 times a second, move the player and the image
+        
+        node[] map = new node[10];
+
+        
         new javax.swing.Timer(16, e -> {
+            map[user.getNode()].update(user.getX(), user.getY()); //update node
             user.update();
+            if(user.getX() > screen.width){
+                if(user.getNode() == 9){
+                    user.setPosition(user.getX()-1, user.getY());
+                }
+                else{
+                    user.setNode(user.getNode() + 1);
+                    user.setPosition(1, user.getY());
+                }
+            }
+            else if(user.getX() < 0){
+                if(user.getNode() == 0){
+                    user.setPosition(user.getX()+1, user.getY());
+                }
+                else{
+                    user.setNode(user.getNode() - 1);
+                    user.setPosition(screen.width-1, user.getY());
+                }
+            }
+            if(user.getY() > screen.height){
+                user.setPosition(user.getX(), user.getY()-1);
+            }
+            else if(user.getY() < 0){
+                user.setPosition(user.getX(), user.getY()+1);
+            }
             playerLabel.setBounds(user.getX(), user.getY(), imgW, imgH);
         }).start();
 
         // REMOVED: posChange(char dir). Movement is handled by player.update() in the game loop
+    }
+
+
+
+    public static void setTile(int id){
+        // Background floor from the Puny Dungeon tileset (added AFTER the player so it's drawn behind it)
+        try {
+            BufferedImage tiles = ImageIO.read(run.class.getResource("punyworld-dungeon-tileset.png"));
+            BufferedImage floorTile = tiles.getSubimage(64*id*4, 0, 64, 64);   // 4x4 block of floor tiles
+            int tileScale = Math.max(1, screen.width / 480); 
+            int t = 64 * tileScale;
+
+            BufferedImage floor = new BufferedImage(screen.width, screen.height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D fg = floor.createGraphics();
+            for (int y = 0; y < screen.height; y += t) {
+                for (int x = 0; x < screen.width; x += t) {
+                    fg.drawImage(floorTile, x, y, t, t, null);
+                }
+            }
+            fg.setColor(new Color(10, 5, 30, 140));   // dark, dreamy tint over the floor
+            fg.fillRect(0, 0, screen.width, screen.height);
+            fg.dispose();
+
+            JLabel bgLabel = new JLabel(new ImageIcon(floor));
+            bgLabel.setBounds(0, 0, screen.width, screen.height);
+            game.add(bgLabel);
+        } catch (Exception ex) {
+            System.out.println("Could not load floor tileset: " + ex);
+        }
     }
 
     

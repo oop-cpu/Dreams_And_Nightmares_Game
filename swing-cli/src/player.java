@@ -12,6 +12,7 @@ public class player {
     // Position & size
     private int x, y;
     private int width = 32, height = 32;
+    private int currNode = 5;
 
     // Movement
     private int baseSpeed = 5;
@@ -176,4 +177,8 @@ public class player {
     public items.Weapon getWeapon() { return equippedWeapon; }
     public List<items.Item> getInventory() { return inventory; }
     public List<items.PowerUp> getActivePowerUps() { return activePowerUps; }
+    public int getNode() { return currNode; }
+
+    // ===== SETTERS =====
+    public void setNode(int x) { currNode = x; }
 }
