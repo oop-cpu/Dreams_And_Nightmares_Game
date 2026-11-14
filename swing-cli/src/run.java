@@ -8,7 +8,7 @@ import java.net.URL;
 
 import javax.sound.sampled.*;
 import javax.swing.*;
-import java.awt.FlowLayout;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -26,16 +26,15 @@ import java.awt.event.KeyEvent;
 
 public class run{
 
-    // Temp Vars
-    public static int posX = 10;
-    public static int posY = 10;
-    public static int speed = 10;
+    // CHANGED: removed Temp Vars (posX, posY, speed)
+    // Position and speed now live in player.java (user.getX(), user.getY(), speed)
 
     // Frames
     public static JFrame game = new JFrame();
 
     // Starting vars
-    //public static player user = new player();
+    // CHANGED: uncommented and gave a start position so the game uses player.java
+    public static player user = new player(10, 10);
 
     // Images (example var 'image')
     public static URL playerImage = run.class.getResource("playerImage.png");
@@ -78,48 +77,72 @@ public class run{
             InputMap inputMap = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
             ActionMap actionMap = panel.getActionMap();
 
-            // Register Spacebar
-            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0), "spaceAction");
-            actionMap.put("spaceAction", new AbstractAction() {
+            // CHANGED: each WASD key now has a PRESSED and a RELEASED binding
+            // Pressed sets user.up/down/left/right = true, released sets it back to false
+            // Holding two keys at once (like W + D) moves diagonally = 8 directions
+            // REMOVED: Space binding (it only moved right, same as D). Can be used for attacks
+
+            // Register w (pressed = start moving, released = stop)
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, false), "wPressed");
+            actionMap.put("wPressed", new AbstractAction(){
                 @Override
-                public void actionPerformed(ActionEvent e) {
-                    posChange('r');
+                public void actionPerformed(ActionEvent e){
+                    user.up = true;
+                }
+            });
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, true), "wReleased");
+            actionMap.put("wReleased", new AbstractAction(){
+                @Override
+                public void actionPerformed(ActionEvent e){
+                    user.up = false;
                 }
             });
 
-            // Register w
-            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0), "wAction");
-            actionMap.put("wAction", new AbstractAction(){
+            // Register a (pressed = start moving, released = stop)
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, false), "aPressed");
+            actionMap.put("aPressed", new AbstractAction(){
                 @Override
                 public void actionPerformed(ActionEvent e){
-                    posChange('u');
+                    user.left = true;
+                }
+            });
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true), "aReleased");
+            actionMap.put("aReleased", new AbstractAction(){
+                @Override
+                public void actionPerformed(ActionEvent e){
+                    user.left = false;
                 }
             });
 
-            // Register a
-            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0), "aAction");
-            actionMap.put("aAction", new AbstractAction(){
+            // Register s (pressed = start moving, released = stop)
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, false), "sPressed");
+            actionMap.put("sPressed", new AbstractAction(){
                 @Override
                 public void actionPerformed(ActionEvent e){
-                    posChange('l');
+                    user.down = true;
+                }
+            });
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, true), "sReleased");
+            actionMap.put("sReleased", new AbstractAction(){
+                @Override
+                public void actionPerformed(ActionEvent e){
+                    user.down = false;
                 }
             });
 
-            // Register d
-            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0), "dAction");
-            actionMap.put("dAction", new AbstractAction(){
+            // Register d (pressed = start moving, released = stop)
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, false), "dPressed");
+            actionMap.put("dPressed", new AbstractAction(){
                 @Override
                 public void actionPerformed(ActionEvent e){
-                    posChange('r');
+                    user.right = true;
                 }
             });
-
-            // Register s
-            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0), "sAction");
-            actionMap.put("sAction", new AbstractAction(){
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true), "dReleased");
+            actionMap.put("dReleased", new AbstractAction(){
                 @Override
                 public void actionPerformed(ActionEvent e){
-                    posChange('d');
+                    user.right = false;
                 }
             });
 
@@ -130,31 +153,17 @@ public class run{
             frame.setVisible(true);
         });
 
+        // ADDED: game loop (~60 times a second). Replaces posChange():
+        // player.update() moves the player using the held keys, then the image follows
+        // Uses javax.swing.Timer by full name because java.util.* also has a Timer class
+        // Game loop: about 60 times a second, move the player and the image
+        new javax.swing.Timer(16, e -> {
+            user.update();
+            playerLabel.setBounds(user.getX(), user.getY(), 2000, 2000);
+        }).start();
+
+        // REMOVED: posChange(char dir). Movement is handled by player.update() in the game loop
     }
 
-    public static void posChange(char dir){
-        switch(dir){
-            case 'l':
-                posX -= speed;
-                break;
-            case 'r':
-                posX += speed;
-                break;
-            case 'u':
-                posY -= speed;
-                break;
-            case 'd':
-                posY += speed;
-                break;
-            default:
-                System.out.println("dir error");
-                return;
-        }
-
-        playerLabel.setBounds(posX, posY, 2000, 2000);
-
-    }
-
-    
     
 }
