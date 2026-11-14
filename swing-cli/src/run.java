@@ -24,6 +24,9 @@ import java.util.concurrent.TimeUnit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+
 public class run{
 
     // CHANGED: removed Temp Vars (posX, posY, speed)
@@ -71,6 +74,31 @@ public class run{
         game.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         game.add(playerLabel);
+
+        // Background floor from the Puny Dungeon tileset (added AFTER the player so it's drawn behind it)
+        try {
+            BufferedImage tiles = ImageIO.read(run.class.getResource("punyworld-dungeon-tileset.png"));
+            BufferedImage floorTile = tiles.getSubimage(64, 0, 64, 64);   // 4x4 block of floor tiles
+            int tileScale = Math.max(1, screen.width / 480); 
+            int t = 64 * tileScale;
+
+            BufferedImage floor = new BufferedImage(screen.width, screen.height, BufferedImage.TYPE_INT_RGB);
+            Graphics2D fg = floor.createGraphics();
+            for (int y = 0; y < screen.height; y += t) {
+                for (int x = 0; x < screen.width; x += t) {
+                    fg.drawImage(floorTile, x, y, t, t, null);
+                }
+            }
+            fg.setColor(new Color(10, 5, 30, 140));   // dark, dreamy tint over the floor
+            fg.fillRect(0, 0, screen.width, screen.height);
+            fg.dispose();
+
+            JLabel bgLabel = new JLabel(new ImageIcon(floor));
+            bgLabel.setBounds(0, 0, screen.width, screen.height);
+            game.add(bgLabel);
+        } catch (Exception ex) {
+            System.out.println("Could not load floor tileset: " + ex);
+        }
 
         //Frame init
         game.setVisible(true);
