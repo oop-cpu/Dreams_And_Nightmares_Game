@@ -49,7 +49,7 @@ public class run{
 
         // Image Loading (example var 'image' and 'imageLabel')
         if (playerImage != null) {
-            ImageIcon icon = new ImageIcon(playerImage);
+            ImageIcon icon = new ImageIcon(new ImageIcon(playerImage).getImage().getScaledInstance(80, -1, Image.SCALE_SMOOTH));
             playerLabel = new JLabel(icon);
             playerLabel.setBounds(10, 10, 2000, 2000);
         } else {
@@ -81,8 +81,8 @@ public class run{
             JPanel panel = new JPanel();
 
             // Bind keys to the panel even when child components have focus
-            InputMap inputMap = panel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-            ActionMap actionMap = panel.getActionMap();
+            InputMap inputMap = game.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW); // intput map go to the rootpane
+            ActionMap actionMap = game.getRootPane().getActionMap(); // action map go to the rootpane
 
             // CHANGED: each WASD key now has a PRESSED and a RELEASED binding
             // Pressed sets user.up/down/left/right = true, released sets it back to false
@@ -95,6 +95,7 @@ public class run{
                 @Override
                 public void actionPerformed(ActionEvent e){
                     user.up = true;
+                    user.lastV = 'u';
                 }
             });
             inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, true), "wReleased");
@@ -111,6 +112,7 @@ public class run{
                 @Override
                 public void actionPerformed(ActionEvent e){
                     user.left = true;
+                    user.lastH = 'l';
                 }
             });
             inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_A, 0, true), "aReleased");
@@ -127,6 +129,7 @@ public class run{
                 @Override
                 public void actionPerformed(ActionEvent e){
                     user.down = true;
+                    user.lastV = 'd';
                 }
             });
             inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_S, 0, true), "sReleased");
@@ -143,6 +146,7 @@ public class run{
                 @Override
                 public void actionPerformed(ActionEvent e){
                     user.right = true;
+                    user.lastH = 'r';
                 }
             });
             inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_D, 0, true), "dReleased");
@@ -157,7 +161,7 @@ public class run{
             frame.setSize(0, 0);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
+            frame.setVisible(false); //set to false to not see the action map pane
         });
 
         // ADDED: game loop (~60 times a second). Replaces posChange():

@@ -17,6 +17,7 @@ public class player {
     private int baseSpeed = 5;
     private int speed = baseSpeed;
     public boolean up, down, left, right;
+    public char lastH = ' ', lastV = ' ';
 
     // Stats
     private int maxHealth = 100;
@@ -65,10 +66,15 @@ public class player {
     // Holding two keys (like W + D) moves diagonally, so all 8 directions work.
     public void update() {
         int dx = 0, dy = 0;
-        if (up)    dy -= 1;
-        if (down)  dy += 1;
-        if (left)  dx -= 1;
-        if (right) dx += 1;
+
+         // If both opposite keys are held, the one pressed last wins
+        if (up && down)      dy = (lastV == 'u') ? -1 : 1;
+        else if (up)         dy = -1;
+        else if (down)       dy = 1;
+
+        if (left && right)   dx = (lastH == 'l') ? -1 : 1;
+        else if (left)       dx = -1;
+        else if (right)      dx = 1;
 
         // Diagonals: scale down so moving diagonally isn't faster than straight
         double step = (dx != 0 && dy != 0) ? speed * 0.7071 : speed;
