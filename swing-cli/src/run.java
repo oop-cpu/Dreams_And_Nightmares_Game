@@ -30,26 +30,31 @@ public class run{
     //public static player user = new player();
 
     // Images (example var 'image')
-    public static URL image = run.class.getResource("image.png");
+    public static URL playerImage = run.class.getResource("playerImage.png");
 
     // Colors
     public static Color backgroundColor = new Color(18, 18, 28);
 
     public static void main(String[] args){
+
+        // Image Loading (example var 'image' and 'imageLabel')
+        JLabel playerLabel;
+        if (playerImage != null) {
+            ImageIcon icon = new ImageIcon(playerImage);
+            playerLabel = new JLabel(icon);
+            playerLabel.setBounds(100, 100, 2000, 2000);
+        } else {
+            System.out.println("playerImage not found!");
+            playerLabel = new JLabel("playerImage");
+        }
+
         // Frame Setup
         game.setExtendedState(JFrame.MAXIMIZED_BOTH);
         game.getContentPane().setBackground(backgroundColor);
         game.setLayout(null);
         game.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // Image Loading (example var 'image' and 'imageLabel')
-        if (image != null) {
-            ImageIcon icon = new ImageIcon(image);
-            JLabel imageLabel = new JLabel(icon);
-            imageLabel.setBounds(100, 250, 2000, 250);
-        } else {
-            System.out.println("Image not found!");
-        }
+        game.add(playerLabel);
 
         //Frame init
         game.setVisible(true);
