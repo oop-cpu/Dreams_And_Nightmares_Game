@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.net.URL;
+import java.util.Random;
 
 public class enemies {
     // ==== ENEMY TYPES ====
@@ -53,6 +54,28 @@ public class enemies {
             label = new JLabel(new ImageIcon(makePlaceholderImage()));
         }
         syncLabel();
+    }
+
+
+    //  ==== RANDOM ENEMY ====
+    // makes enemey with random type at a random spot inside the area
+    public enemies(Rectangle area, Random rng) {
+        this (randomType(rng), randomX(area, rng), randomY(area, rng));
+    }
+
+    // pick random type 
+    private static Type randomType(Random rng) {
+        Type[] types = Type.values();
+        return types[rng.nextInt(types.length)];
+    }
+
+    // random x / y inside the area (72 = biggest enemy size, so it fits inside area) 
+    private static int randomX(Rectangle area, Random rng) {
+        return area.x + rng.nextInt(Math.max(1, area.width - 72));
+    }
+
+    private static int randomY(Rectangle area, Random rng) {
+        return area.y + rng.nextInt(Math.max(1, area.height - 72));
     }
 
     // ==== movement ====
