@@ -176,17 +176,15 @@ public class run{
         
         node[] map = new node[10];
         Random rng = new Random();
-        Rectangle area = new Rectangle(screen.width, screen.height);
+        Rectangle area = new Rectangle(100, 100, screen.width - 200, screen.height - 200);
         for (int i = 0; i < map.length; i++) {
-            map[i].init(1, 5, area, rng);
+            map[i] = new node();
+            map[i].init(i, 5, area, rng);
         }
+        map[0].addAndShow(game); // put enemies on screen
 
-        
         new javax.swing.Timer(16, e -> {
             map[user.getNode()].update(user.getX(), user.getY()); //update node
-            for(int i = 0; i < 5; i++){
-                game.add(map[user.getNode()].getLabelE(i));
-            }
             user.update();
             if(user.getX() > screen.width){
                 if(user.getNode() == 9){
