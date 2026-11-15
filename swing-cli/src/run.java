@@ -175,10 +175,18 @@ public class run{
         // Game loop: about 60 times a second, move the player and the image
         
         node[] map = new node[10];
+        Random rng = new Random();
+        Rectangle area = new Rectangle(screen.width, screen.height);
+        for (int i = 0; i < map.length; i++) {
+            map[i].init(1, 5, area, rng);
+        }
 
         
         new javax.swing.Timer(16, e -> {
             map[user.getNode()].update(user.getX(), user.getY()); //update node
+            for(int i = 0; i < 5; i++){
+                game.add(map[user.getNode()].getLabelE(i));
+            }
             user.update();
             if(user.getX() > screen.width){
                 if(user.getNode() == 9){
