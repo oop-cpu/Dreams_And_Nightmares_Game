@@ -48,6 +48,8 @@ public class run{
     // Colors
     public static Color backgroundColor = new Color(18, 18, 28);
 
+    public static node[] map;   // all the rooms (static so the key bindings can reach it)
+
     public static void main(String[] args){
 
         // Image Loading (example var 'image' and 'imageLabel')
@@ -93,6 +95,15 @@ public class run{
             // Pressed sets user.up/down/left/right = true, released sets it back to false
             // Holding two keys at once (like W + D) moves diagonally = 8 directions
             // REMOVED: Space binding (it only moved right, same as D). Can be used for attacks
+
+            // Register space = light attack on enemies in this room
+            inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0, false), "attack");
+            actionMap.put("attack", new AbstractAction(){
+                @Override
+                public void actionPerformed(ActionEvent e){
+                    combat.playerAttack(user, map[user.getNode()].getEnemies());
+                }
+            });
 
             // Register w (pressed = start moving, released = stop)
             inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_W, 0, false), "wPressed");
@@ -174,17 +185,18 @@ public class run{
         // Uses javax.swing.Timer by full name because java.util.* also has a Timer class
         // Game loop: about 60 times a second, move the player and the image
         
-        node[] map = new node[10];
+        map = new node[10];
         Random rng = new Random();
         Rectangle area = new Rectangle(100, 100, screen.width - 200, screen.height - 200);
         for (int i = 0; i < map.length; i++) {
             map[i] = new node();
             map[i].init(i, 5, area, rng);
         }
-        map[0].addAndShow(game); // put enemies on screen
+        map[user.getNode()].addAndShow(game); // show the enemies of the room the player starts in
 
         new javax.swing.Timer(16, e -> {
             map[user.getNode()].update(user.getX(), user.getY()); //update node
+            combat.enemyContact(user, map[user.getNode()].getEnemies()); // enemies touching you hurt
             user.update();
             if(user.getX() > screen.width){
                 if(user.getNode() == 9){
@@ -222,7 +234,9 @@ public class run{
         // Background floor from the Puny Dungeon tileset (added AFTER the player so it's drawn behind it)
         try {
             BufferedImage tiles = ImageIO.read(run.class.getResource("punyworld-dungeon-tileset.png"));
-            BufferedImage floorTile = tiles.getSubimage(64*id*4, 0, 64, 64);   // 4x4 block of floor tiles
+            int[][] floorSpots = { {64, 0}, {0, 80}, {16, 80} };      // x, y of floor blocks in the tileset
+            int[] spot = floorSpots[id % floorSpots.length];          // % keeps it inside the list
+            BufferedImage floorTile = tiles.getSubimage(spot[0], spot[1], 64, 64);   // 4x4 block of floor tiles
             int tileScale = Math.max(1, screen.width / 480); 
             int t = 64 * tileScale;
 

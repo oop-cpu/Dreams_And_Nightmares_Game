@@ -105,13 +105,15 @@ public class enemies {
         syncLabel();
     }
 
-    // contact damage
-    public void tryHit(player target) {
-        long now = System.currentTimeMillis();
-        if (getBounds().intersects(target.getBounds()) && now - lastTimeHit >= hitCoolDown) {
-            target.takeDamage(damage);
-            lastTimeHit = now;
-        }
+    // ==== CONTACT DAMAGE COOLDOWN (used by combat.java) ====
+    // True if enough time has passed since this enemy last hurt the player
+    public boolean canHit() {
+        return System.currentTimeMillis() - lastTimeHit >= hitCoolDown;
+    }
+
+    // Call when this enemy hurts the player, to restart its cooldown
+    public void markHit() {
+        lastTimeHit = System.currentTimeMillis();
     }
 
     public void takeDamage(int amount) {
