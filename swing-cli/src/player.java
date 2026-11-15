@@ -68,7 +68,7 @@ public class player {
     public void update() {
         int dx = 0, dy = 0;
 
-         // If both opposite keys are held, the one pressed last wins
+        // If both opposite keys are held, they cancel out and the player stops that way
         if (up && down)      dy = 0;
         else if (up)         dy = -1;
         else if (down)       dy = 1;
@@ -113,32 +113,9 @@ public class player {
 
     public boolean isAlive() { return health > 0; }
 
-    // ===== ATTACK =====
-    public void attackEnemies(enemies[] list, int range) {
-        int dmg = attack();
-        if (dmg == 0) return;
-        Rectangle me = getBounds();
-        for (enemies e : list) {
-            if (e == null || !e.isAlive()) continue; {
-                Rectangle r = e.getBounds();
-                double dx = r.getCenterX() - me.getCenterX();
-                double dy = r.getCenterY() - me.getCenterY();
-                if(Math.sqrt(dx * dx + dy * dy) <= range) {
-                    e.takeDamage(dmg);
-                }
-            }
-        }
-    }
-
+    // ===== ATTACK STATS (the attack itself is in combat.java) =====
     public int getAttackDamage() {
         return baseAttack + equippedWeapon.getDamage() + bonusDamage;
-    }
-
-    /** Returns damage dealt, or 0 if the weapon is still on cooldown. */
-    public int attack() {
-        if (!equippedWeapon.canAttack()) return 0;
-        equippedWeapon.markAttack();
-        return getAttackDamage();
     }
 
     // ===== INVENTORY =====
@@ -183,7 +160,7 @@ public class player {
     }
 
     // ===== GETTERS =====
-    public Rectangle getBounds() { return new Rectangle(x, y, width, height); }
+        public Rectangle getBounds() { return new Rectangle(x, y, width, height); }
     public int getX() { return x; }
     public int getY() { return y; }
     public int getSpeed() { return speed; }
