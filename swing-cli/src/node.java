@@ -8,7 +8,7 @@ public class node{
     private int settingId;
     private enemies[] eList;
 
-    node(int settingId, int enemyCount, Rectangle area, Random rng) {
+    public void init(int settingId, int enemyCount, Rectangle area, Random rng) {
         this.settingId = settingId;
         eList = new enemies[enemyCount];
         for(int i = 0; i < eList.length; i++) {
@@ -23,14 +23,13 @@ public class node{
         }
     }
 
- 
-
-
     public void update(int userX, int userY){
         for(int i = 0; i < eList.length; i++){
             eList[i].increment(userX, userY); 
         }
     }
+
+    public enemies[] getEnemies(){ return eList; }
 
     public JLabel getLabelE(int i){
         return eList[i].getLabel();

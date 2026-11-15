@@ -12,7 +12,7 @@ public class player {
     // Position & size
     private int x, y;
     private int width = 32, height = 32;
-    private int currNode = 5;
+    private int currNode = 0;
 
     // Movement
     private int baseSpeed = 5;
@@ -114,6 +114,22 @@ public class player {
     public boolean isAlive() { return health > 0; }
 
     // ===== ATTACK =====
+    public void attackEnemies(enemies[] list, int range) {
+        int dmg = attack();
+        if (dmg == 0) return;
+        Rectangle me = getBounds();
+        for (enemies e : list) {
+            if (e == null || !e.isAlive()) continue; {
+                Rectangle r = e.getBounds();
+                double dx = r.getCenterX() - me.getCenterX();
+                double dy = r.getCenterY() - me.getCenterY();
+                if(Math.sqrt(dx * dx + dy * dy) <= range) {
+                    e.takeDamage(dmg);
+                }
+            }
+        }
+    }
+
     public int getAttackDamage() {
         return baseAttack + equippedWeapon.getDamage() + bonusDamage;
     }
